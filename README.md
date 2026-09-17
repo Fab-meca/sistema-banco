@@ -50,4 +50,4 @@ Para testes use a extensão Thunder Client do VS Code
 
 
 
-Por Fabrício Santos
+Por Fabrício Santos e Théo Gibbon
