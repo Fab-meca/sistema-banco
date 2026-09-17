@@ -1,0 +1,63 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+}
+
+model Usuario {
+  id       Int      @id @default(autoincrement())
+  nome     String
+  email    String   @unique
+  senha    String
+  criadoEm DateTime @default(now())
+  conta    Conta?
+
+  @@map("usuarios")
+}
+
+model Conta {
+  id              Int      @id @default(autoincrement())
+  numero          String   @unique
+  saldo           Float    @default(0)
+  criadoEm        DateTime @default(now())
+  usuarioId       Int      @unique
+  usuario         Usuario  @relation(fields: [usuarioId], references: [id])
+  transacoes      Transacao[]
+  contasConjuntas ContaConjuntaConta[]
+
+  @@map("contas")
+}
+
+model Transacao {
+  id      Int      @id @default(autoincrement())
+  tipo    String
+  valor   Float
+  data    DateTime @default(now())
+  contaId Int
+  conta   Conta    @relation(fields: [contaId], references: [id])
+
+  @@map("transacoes")
+}
+
+model ContaConjunta {
+  id       Int      @id @default(autoincrement())
+  nome     String
+  saldo    Float    @default(0)
+  criadoEm DateTime @default(now())
+  contas   ContaConjuntaConta[]
+
+  @@map("contas_conjuntas")
+}
+
+model ContaConjuntaConta {
+  id              Int           @id @default(autoincrement())
+  contaId         Int
+  conta           Conta         @relation(fields: [contaId], references: [id])
+  contaConjuntaId Int
+  contaConjunta   ContaConjunta @relation(fields: [contaConjuntaId], references: [id])
+
+  @@unique([contaId, contaConjuntaId])
+  @@map("contas_conjuntas_contas")
+}
