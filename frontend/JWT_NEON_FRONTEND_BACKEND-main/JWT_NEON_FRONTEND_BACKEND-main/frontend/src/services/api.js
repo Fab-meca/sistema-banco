@@ -1,6 +1,5 @@
 import axios from 'axios';
 
-// URL base do backend
 const api = axios.create({
   baseURL: 'http://localhost:3000',
   headers: {
@@ -8,13 +7,7 @@ const api = axios.create({
   },
 });
 
-// ------------------------------------------------------------------
-// Interceptor:
-// Antes de toda requisição, se existir um token,
-// ele é colocado automaticamente no Authorization.
-// ------------------------------------------------------------------
 api.interceptors.request.use((config) => {
-
   const token = config.token;
 
   if (token) {
@@ -24,19 +17,13 @@ api.interceptors.request.use((config) => {
   return config;
 });
 
-// ------------------------------------------------------------------
-// Tratamento único de erros.
-// ------------------------------------------------------------------
 async function request(config) {
   try {
     const response = await api(config);
-
     return response.data;
-
   } catch (error) {
-
     const mensagem =
-      error.response?.data?.error ||
+      error.response?.data?.erro ||
       'Erro ao comunicar com o servidor.';
 
     throw new Error(mensagem);
@@ -44,107 +31,81 @@ async function request(config) {
 }
 
 // ===============================================================
-// LOGIN
+// LOGIN / REGISTRO
 // ===============================================================
 
-export function registrar({ email, username, password }) {
-
+export function registrar({ nome, email, senha }) {
   return request({
-
     url: '/register',
-
     method: 'POST',
-
-    data: { email, username, password },
-
+    data: { nome, email, senha },
   });
-
 }
 
-export function login({ username, password }) {
-
+export function login({ email, senha }) {
   return request({
-
     url: '/login',
-
     method: 'POST',
-
-    data: { username, password },
-
+    data: { email, senha },
   });
-
 }
 
 // ===============================================================
-// PRODUTOS
+// CONTAS
 // ===============================================================
 
-export function listarProdutosporDono(token) {
-
+export function listarContas(token) {
   return request({
-
-    url: '/api/me/products',
-
+    url: '/contas',
     token,
-
   });
-
 }
 
-export function buscarProdutoPorId(id, token) {
-
+export function buscarContaPorId(id, token) {
   return request({
-
-    url: `/api/products/${id}`,
-
+    url: `/contas/${id}`,
     token,
-
   });
-
 }
 
-export function criarProduto(produto, token) {
-
+export function criarConta(conta, token) {
   return request({
-
-    url: '/api/products',
-
+    url: '/contas',
     method: 'POST',
-
-    data: produto,
-
+    data: conta,
     token,
-
   });
-
 }
 
-export function atualizarProduto(id, produto, token) {
-
+export function atualizarConta(id, conta, token) {
   return request({
-
-    url: `/api/products/${id}`,
-
+    url: `/contas/${id}`,
     method: 'PUT',
-
-    data: produto,
-
+    data: conta,
     token,
-
   });
-
 }
 
-export function deletarProduto(id, token) {
-
+export function deletarConta(id, token) {
   return request({
-
-    url: `/api/products/${id}`,
-
+    url: `/contas/${id}`,
     method: 'DELETE',
-
     token,
-
   });
+}
 
+export function listarTransacoes(token) {
+  return request({
+    url: '/transacoes',
+    token,
+  });
+}
+
+export function criarTransacao(transacao, token) {
+  return request({
+    url: '/transacoes',
+    method: 'POST',
+    data: transacao,
+    token,
+  });
 }
